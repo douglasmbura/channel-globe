@@ -28,17 +28,17 @@ export const CountryMarker = ({ country, onSelect, isSelected }: CountryMarkerPr
   const [hovered, setHovered] = useState(false);
   
   const position = latLngToVector3(country.lat, country.lng, 1.02);
-  const color = getMarkerColor(country.channels);
-  const baseSize = getMarkerSize(country.channels);
+  const color = getMarkerColor(country.color);
+  const baseSize = getMarkerSize();
   
   useFrame((state) => {
     if (meshRef.current) {
-      const scale = hovered || isSelected ? 1.3 : 1;
+      const scale = hovered || isSelected ? 1.5 : 1;
       meshRef.current.scale.lerp(new THREE.Vector3(scale, scale, scale), 0.1);
     }
     if (glowRef.current) {
       const pulse = Math.sin(state.clock.elapsedTime * 2) * 0.2 + 1;
-      glowRef.current.scale.setScalar(pulse * (hovered ? 1.5 : 1.2));
+      glowRef.current.scale.setScalar(pulse * (hovered ? 1.8 : 1.4));
     }
   });
 
@@ -50,7 +50,7 @@ export const CountryMarker = ({ country, onSelect, isSelected }: CountryMarkerPr
         <meshBasicMaterial 
           color={color} 
           transparent 
-          opacity={0.15}
+          opacity={0.2}
         />
       </mesh>
       
@@ -81,20 +81,18 @@ export const CountryMarker = ({ country, onSelect, isSelected }: CountryMarkerPr
         />
       </mesh>
 
-      {/* Channel count label */}
-      {(hovered || isSelected) && (
+      {/* Country name label on hover */}
+      {hovered && !isSelected && (
         <Html
-          position={[0, baseSize + 0.05, 0]}
+          position={[0, baseSize + 0.03, 0]}
           center
           style={{
             pointerEvents: 'none',
             userSelect: 'none',
           }}
         >
-          <div className="glass-panel px-3 py-2 animate-fade-in whitespace-nowrap">
+          <div className="glass-panel px-2 py-1 animate-fade-in whitespace-nowrap">
             <p className="text-xs font-medium text-foreground">{country.name}</p>
-            <p className="text-lg font-bold gradient-text">{country.channels}</p>
-            <p className="text-[10px] text-muted-foreground">channels</p>
           </div>
         </Html>
       )}
