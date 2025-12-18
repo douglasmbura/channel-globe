@@ -6,6 +6,7 @@ import { VideoPlayer } from '@/components/UI/VideoPlayer';
 import { ZoomControls } from '@/components/UI/ZoomControls';
 import { Instructions } from '@/components/UI/Instructions';
 import { Country, Channel } from '@/data/countries';
+import { Toaster } from '@/components/ui/toaster';
 
 const Index = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
@@ -52,7 +53,7 @@ const Index = () => {
       </div>
 
       {/* UI Overlays */}
-      <Header />
+      <Header onPlayChannel={handlePlayChannel} />
       
       <ChannelsPanel
         country={selectedCountry}
@@ -73,6 +74,8 @@ const Index = () => {
         channel={playingChannel}
         onClose={handleClosePlayer}
       />
+
+      <Toaster />
     </div>
   );
 };
