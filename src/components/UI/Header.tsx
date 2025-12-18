@@ -1,26 +1,96 @@
-import { Tv, Globe } from 'lucide-react';
+import { Globe, Tv, MapPin, Heart } from 'lucide-react';
+import { countries, Channel } from '@/data/countries';
+import { Button } from '@/components/ui/button';
+import { useFavorites } from '@/hooks/useFavorites';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-export const Header = () => {
+interface HeaderProps {
+  onPlayChannel?: (channel: Channel) => void;
+}
+
+export const Header = ({ onPlayChannel }: HeaderProps) => {
+  const { favorites, removeFavorite } = useFavorites();
+  const totalCountries = countries.length;
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 p-6">
+    <header className="fixed top-0 left-0 right-0 z-40 p-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center marker-glow">
-            <Tv className="w-5 h-5 text-primary" />
-          </div>
+        <div className="glass-panel px-4 py-3 flex items-center gap-3">
+          <Globe className="w-8 h-8 text-primary animate-pulse" />
           <div>
-            <h1 className="text-xl font-bold text-foreground">
-              TV<span className="gradient-text">.globe</span>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              TV Globe
             </h1>
-            <p className="text-xs text-muted-foreground">Explore world television</p>
+            <p className="text-xs text-muted-foreground">Live streaming worldwide</p>
           </div>
         </div>
-        
-        <div className="glass-panel px-4 py-2 flex items-center gap-2">
-          <Globe className="w-4 h-4 text-primary" />
-          <span className="text-sm font-medium">50 Countries</span>
-          <span className="text-muted-foreground">•</span>
-          <span className="text-sm text-muted-foreground">5,000+ Channels</span>
+
+        <div className="flex items-center gap-3">
+          <div className="glass-panel px-4 py-2 flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium">{totalCountries}</span>
+              <span className="text-xs text-muted-foreground">Countries</span>
+            </div>
+            <div className="w-px h-6 bg-border" />
+            <div className="flex items-center gap-2">
+              <Tv className="w-4 h-4 text-accent" />
+              <span className="text-sm font-medium">10K+</span>
+              <span className="text-xs text-muted-foreground">Channels</span>
+            </div>
+          </div>
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="glass-panel border-0 gap-2">
+                <Heart className={`w-4 h-4 ${favorites.length > 0 ? 'fill-red-500 text-red-500' : ''}`} />
+                <span className="hidden sm:inline">Favorites</span>
+                {favorites.length > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-red-500 text-white text-xs">{favorites.length}</span>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-[400px]">
+              <SheetHeader>
+                <SheetTitle className="flex items-center gap-2">
+                  <Heart className="w-5 h-5 fill-red-500 text-red-500" />
+                  Favorites ({favorites.length})
+                </SheetTitle>
+              </SheetHeader>
+              <ScrollArea className="h-[calc(100vh-100px)] mt-4">
+                {favorites.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Heart className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                    <p>No favorites yet</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2 pr-4">
+                    {favorites.map((channel, index) => (
+                      <div key={`${channel.url}-${index}`} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group">
+                        <div className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer" onClick={() => onPlayChannel?.(channel)}>
+                          <img src={channel.countryFlag} alt="" className="w-6 h-4 object-cover rounded" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium truncate">{channel.name}</p>
+                            <p className="text-xs text-muted-foreground">{channel.countryName}</p>
+                          </div>
+                        </div>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100" onClick={() => removeFavorite(channel.url)}>
+                          <Heart className="w-4 h-4 fill-red-500 text-red-500" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </ScrollArea>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>
