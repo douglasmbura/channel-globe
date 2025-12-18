@@ -1,19 +1,19 @@
 import { useRef, useMemo } from 'react';
-import { useFrame, useLoader } from '@react-three/fiber';
-import { TextureLoader } from 'three';
+import { useFrame } from '@react-three/fiber';
+import { useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 
 export const Earth = () => {
   const earthRef = useRef<THREE.Mesh>(null);
   const cloudsRef = useRef<THREE.Mesh>(null);
 
-  // Use NASA satellite textures
-  const [earthMap, bumpMap, specularMap, cloudsMap] = useLoader(TextureLoader, [
-    'https://unpkg.com/three-globe@2.31.0/example/img/earth-blue-marble.jpg',
-    'https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png',
-    'https://unpkg.com/three-globe@2.31.0/example/img/earth-water.png',
-    'https://unpkg.com/three-globe@2.31.0/example/img/earth-clouds.png',
-  ]);
+  // Use reliable texture sources with fallback approach
+  const textures = useTexture({
+    map: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg',
+    bumpMap: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_normal_2048.jpg',
+    specularMap: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_specular_2048.jpg',
+    cloudsMap: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_clouds_1024.png',
+  });
 
   useFrame(() => {
     if (cloudsRef.current) {
@@ -55,10 +55,10 @@ export const Earth = () => {
       <mesh ref={earthRef}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshPhongMaterial
-          map={earthMap}
-          bumpMap={bumpMap}
+          map={textures.map}
+          bumpMap={textures.bumpMap}
           bumpScale={0.05}
-          specularMap={specularMap}
+          specularMap={textures.specularMap}
           specular={new THREE.Color(0x333333)}
           shininess={5}
         />
@@ -68,7 +68,7 @@ export const Earth = () => {
       <mesh ref={cloudsRef} scale={1.01}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshPhongMaterial
-          map={cloudsMap}
+          map={textures.cloudsMap}
           transparent
           opacity={0.3}
           depthWrite={false}
