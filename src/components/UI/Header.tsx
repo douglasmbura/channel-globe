@@ -1,7 +1,8 @@
-import { Globe, Tv, MapPin, Heart } from 'lucide-react';
+import { Tv, MapPin, Heart } from 'lucide-react';
 import { countries, Channel } from '@/data/countries';
 import { Button } from '@/components/ui/button';
 import { useFavorites } from '@/hooks/useFavorites';
+import cartoTvLogo from '@/assets/carto-tv-logo.png';
 import {
   Sheet,
   SheetContent,
@@ -23,10 +24,10 @@ export const Header = ({ onPlayChannel }: HeaderProps) => {
     <header className="fixed top-0 left-0 right-0 z-40 p-4">
       <div className="flex items-center justify-between">
         <div className="glass-panel px-4 py-3 flex items-center gap-3">
-          <Globe className="w-8 h-8 text-primary animate-pulse" />
+          <img src={cartoTvLogo} alt="Carto TV" className="w-10 h-10 object-contain" />
           <div>
             <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              TV Globe
+              Carto TV
             </h1>
             <p className="text-xs text-muted-foreground">Live streaming worldwide</p>
           </div>
